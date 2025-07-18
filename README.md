@@ -1,25 +1,36 @@
 # Nice Space Server
 
-A simple Python application that prints "Hello World", designed to be deployed on DigitalOcean App Platform.
-
-## Project Overview 
-
-This project demonstrates a basic Python application deployment on DigitalOcean's App Platform. It serves as a minimal example of how to set up and deploy a Python script in a cloud environment.
+A Python application that demonstrates gRPC communication with Link service and provides a web interface.
 
 ## Requirements
 
 - Python 3.x
+- Virtual environment (recommended)
+- Link API key
 - DigitalOcean account for deployment
 
-## Project Structure
+## Environment Variables
 
+The application requires the following environment variables:
+
+1. `LINK_KEY` - Your Link API key
+2. `PORT` - The port number (when running as web service)
+
+### Setting Environment Variables
+
+For local development:
+```bash
+# Set variables individually
+export PORT=8080
+export link_key="your-api-key-here"
+
+# Or set both at once
+export PORT=8080 link_key="your-api-key-here"
 ```
-nice-space-server/
-├── README.md
-├── main.py        # Main application file
-├── Procfile       # Deployment process file
-└── requirements.txt
-```
+
+For DigitalOcean deployment:
+- Set these in your app's environment variables configuration
+- The `PORT` variable will be set automatically by the platform
 
 ## Local Development
 
@@ -29,58 +40,44 @@ git clone https://github.com/yourusername/nice-space-server.git
 cd nice-space-server
 ```
 
-2. Run the application locally:
+2. Create and activate virtual environment:
 ```bash
-python main.py
+python3 -m venv venv
+source venv/bin/activate  # On Unix/macOS
 ```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Run the application:
+
+As a command-line tool (tests gRPC connection):
+```bash
+export link_key="your-api-key-here"
+python3 main.py
+```
+
+As a web service:
+```bash
+export PORT=8080 link_key="your-api-key-here"
+python3 main.py
+```
+
+## Web Endpoints
+
+- `/` - Returns Hello World with timestamp and environment status
+- `/link/test` - Tests the Link gRPC connection
 
 ## Deployment on DigitalOcean
 
-1. Fork or clone this repository to your GitHub account
+1. Push your code to GitHub
+2. Create a new app in DigitalOcean App Platform
+3. Connect to your repository
+4. Set the required environment variables:
+   - `LINK_KEY`: Your Link API key
+   - `PORT`: Will be set automatically
+5. Deploy the application
 
-2. Make sure your repository contains all required files:
-   - `main.py` - The Python script
-   - `Procfile` - Contains `web: python main.py`
-   - `requirements.txt` - Python dependencies (empty for this simple app)
-
-3. Log in to your DigitalOcean account
-
-4. Go to the App Platform section
-
-5. Click "Create App"
-
-6. Select your GitHub repository
-
-7. Configure your app:
-   - Choose Python environment
-   - Select the branch you want to deploy
-   - Important: Leave the "Run Command" field empty (the Procfile will handle this)
-
-8. Click "Deploy"
-
-### Deployment Configuration Notes
-
-The `Procfile` in this repository contains:
-```
-web: python main.py
-```
-This tells DigitalOcean App Platform exactly how to run the application. The `web:` prefix is important as it indicates this is a web process.
-
-### Troubleshooting Deployment
-
-If you see this error:
-```
-ERROR: failed to launch: determine start command: when there is no default process a command is required
-```
-Check that:
-1. The `Procfile` exists in your repository root
-2. The `Procfile` content is exactly `web: python main.py`
-3. The "Run Command" field in DigitalOcean App Platform is empty
-
-## Contributing
-
-Feel free to submit issues and enhancement requests.
-
-## License
-
-[MIT](https://opensource.org/licenses/MIT) 
+The application will use the Procfile configuration to run with gunicorn in production. 
